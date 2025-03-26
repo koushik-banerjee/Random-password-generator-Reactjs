@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 
 function App() {
@@ -7,24 +7,25 @@ function App() {
   const [specialChar, setSpecialChar] = useState(false);
   const [number, setNumber] = useState(false);
 
-  useEffect(() => {
-    setPass(generatePassword(count, number, specialChar));
-  }, [count, number, specialChar]);
-
+  
   //-----------------------------------------------------------
-  function generatePassword(n, num, sc) {
+  const generatePassword = useCallback(()=>{
     let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    if (num) chars += "0123456789";
-    if (sc) chars += "!@#$%^&*()_+";
-
+    if (number) chars += "0123456789";
+    if (specialChar) chars += "!@#$%^&*()_+";
+    
     let password = "";
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < count; i++) {
       const randomIndex = Math.floor(Math.random() * chars.length);
       password += chars[randomIndex];
     }
-    return password;
-  }
+    setPass(password);
+  },[count,number,specialChar,setPass]);
   //-------------------------------------------------------------------
+
+  useEffect(() => {
+    generatePassword(count, number, specialChar);
+  }, [count, number, specialChar,generatePassword]);
 
   function handleClick(e) {
     e.preventDefault();
@@ -33,15 +34,12 @@ function App() {
   }
 
   function handleRange(e) {
-    setPass(generatePassword(e.target.value, number, specialChar));
     setCount(e.target.value);
   }
   function handleSpecialChar(e) {
-    setPass(generatePassword(count, number, e.target.checked));
     setSpecialChar(e.target.checked);
   }
   function handleNumber(e) {
-    setPass(generatePassword(count, e.target.checked, specialChar));
     setNumber(e.target.checked);
   }
 
