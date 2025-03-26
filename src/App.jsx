@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import "./App.css";
 
 function App() {
@@ -6,41 +6,39 @@ function App() {
   const [count, setCount] = useState(8);
   const [specialChar, setSpecialChar] = useState(false);
   const [number, setNumber] = useState(false);
+  const passwordRef = useRef(null);
 
-  
   //-----------------------------------------------------------
-  const generatePassword = useCallback(()=>{
+  const generatePassword = useCallback(() => {
     let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     if (number) chars += "0123456789";
     if (specialChar) chars += "!@#$%^&*()_+";
-    
+
     let password = "";
     for (let i = 0; i < count; i++) {
       const randomIndex = Math.floor(Math.random() * chars.length);
       password += chars[randomIndex];
     }
     setPass(password);
-  },[count,number,specialChar,setPass]);
+  }, [count, number, specialChar, setPass]);
   //-------------------------------------------------------------------
 
   useEffect(() => {
-    generatePassword(count, number, specialChar);
-  }, [count, number, specialChar,generatePassword]);
+    generatePassword();
+  }, [count, number, specialChar, generatePassword]);
 
-  function handleClick(e) {
+  function handleSelectCopy(e) {
     e.preventDefault();
-    window.navigator.clipboard.writeText(pass);
-    alert("Password Copied!!!");
-  }
-
-  function handleRange(e) {
-    setCount(e.target.value);
-  }
-  function handleSpecialChar(e) {
-    setSpecialChar(e.target.checked);
-  }
-  function handleNumber(e) {
-    setNumber(e.target.checked);
+    passwordRef.current?.select();
+    window.navigator.clipboard
+      .writeText(pass)
+      .then(() => {
+        alert("password Copied!!!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy password: ", err);
+        alert("Failed to copy password. Please try again.");
+      });
   }
 
   return (
@@ -51,12 +49,8 @@ function App() {
         </div>
         <form className="bg-blue-950 py-5 px-9">
           <div className="flex">
-            <input 
-            type="text" 
-            value={pass} 
-            readOnly
-            />
-            <button className="" onClick={handleClick}>
+            <input type="text" value={pass} readOnly ref={passwordRef} />
+            <button className="" onClick={handleSelectCopy}>
               Copy
             </button>
           </div>
@@ -71,7 +65,9 @@ function App() {
                 min={8}
                 max={32}
                 value={count}
-                onChange={handleRange}
+                onChange={(e) => {
+                  setCount(e.target.value);
+                }}
               />
             </span>
 
@@ -83,7 +79,9 @@ function App() {
                 name="Number"
                 id="Number"
                 checked={number}
-                onChange={handleNumber}
+                onChange={(e) => {
+                  setNumber(e.target.checked);
+                }}
               />
             </span>
 
@@ -95,7 +93,9 @@ function App() {
                 name="special-character"
                 id="special-character"
                 checked={specialChar}
-                onChange={handleSpecialChar}
+                onChange={(e) => {
+                  setSpecialChar(e.target.checked);
+                }}
               />
             </span>
           </div>
