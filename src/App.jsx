@@ -33,7 +33,15 @@ function App() {
     window.navigator.clipboard
       .writeText(pass)
       .then(() => {
-        alert("password Copied!!!");
+        const CopyButton = document.getElementById("CopyButton");
+        CopyButton.innerText="Copied!!"
+        CopyButton.classList.add("pop-up"); 
+
+        setTimeout(() => {
+          CopyButton.innerText="Copy";
+          CopyButton.classList.remove("pop-up"); 
+        }, 2500);
+        // alert("password Copied!!!");
       })
       .catch((err) => {
         console.error("Failed to copy password: ", err);
@@ -50,7 +58,7 @@ function App() {
         <form className="bg-blue-950 py-5 px-9">
           <div className="flex">
             <input type="text" value={pass} readOnly ref={passwordRef} />
-            <button className="" onClick={handleSelectCopy}>
+            <button id="CopyButton" className="" onClick={handleSelectCopy}>
               Copy
             </button>
           </div>
