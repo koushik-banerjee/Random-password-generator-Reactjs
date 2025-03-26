@@ -34,7 +34,7 @@ function App() {
       .writeText(pass)
       .then(() => {
         const CopyButton = document.getElementById("CopyButton");
-        CopyButton.innerText="Copied!!"
+        CopyButton.innerText="Copied✅"
         CopyButton.classList.add("pop-up"); 
 
         setTimeout(() => {
