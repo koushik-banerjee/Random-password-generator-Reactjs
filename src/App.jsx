@@ -39,7 +39,7 @@ function App() {
 
         setTimeout(() => {
           CopyButton.innerText="Copy";
-          CopyButton.classList.remove("pop-up"); 
+          CopyButton.classList.remove("pop-up");
         }, 2500);
         // alert("password Copied!!!");
       })
